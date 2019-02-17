@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 
-namespace TMPE_EVE.UI {
+namespace EmergencyVehicleExtension.UI {
     class TextureResources {
 
         public static readonly Texture2D PullOverButton2D;
@@ -16,7 +16,7 @@ namespace TMPE_EVE.UI {
         private static Texture2D LoadDllResource(string resourceName, int width, int height) {
             try {
                 var myAssembly = Assembly.GetExecutingAssembly();
-                var myStream = myAssembly.GetManifestResourceStream("TMPE_EVE.Resources." + resourceName);
+                var myStream = myAssembly.GetManifestResourceStream("EmergencyVehicleExtension.Resources." + resourceName);
 
                 var texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
 

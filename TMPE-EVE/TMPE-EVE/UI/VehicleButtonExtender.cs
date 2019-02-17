@@ -5,7 +5,7 @@ using System.Timers;
 using TrafficManager.UI.MainMenu;
 using UnityEngine;
 
-namespace TMPE_EVE.UI {
+namespace EmergencyVehicleExtension.UI {
     class VehicleButtonExtender : MonoBehaviour {
         private IList<UIButton> buttons;
 

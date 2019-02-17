@@ -1,10 +1,10 @@
-﻿using ICities;
+using ICities;
 using CSUtil.Commons;
 using ColossalFramework.UI;
-using TMPE_EVE.UI;
+using EmergencyVehicleExtension.UI;
 using UnityEngine;
 
-namespace TMPE_EVE {
+namespace EmergencyVehicleExtension {
     public class LoadingExtension : LoadingExtensionBase {
         public override void OnLevelLoaded(LoadMode mode) {
             SimulationManager.UpdateMode updateMode = SimulationManager.instance.m_metaData.m_updateMode;

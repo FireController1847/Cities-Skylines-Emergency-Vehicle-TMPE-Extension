@@ -2,7 +2,7 @@
 using CSUtil.Commons;
 using System.Reflection;
 
-namespace TMPE_EVE
+namespace EmergencyVehicleExtension
 {
     public class Eve : IUserMod
     {

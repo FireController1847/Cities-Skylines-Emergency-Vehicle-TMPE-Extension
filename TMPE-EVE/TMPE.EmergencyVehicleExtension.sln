@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMPE Emergency Vehicle Extension", "TMPE-EVE\TMPE-EVE.csproj", "{ED521FF4-73CD-473A-8160-50522A150660}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMPE.EmergencyVehicleExtension", "TMPE-EVE\TMPE.EmergencyVehicleExtension.csproj", "{ED521FF4-73CD-473A-8160-50522A150660}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
