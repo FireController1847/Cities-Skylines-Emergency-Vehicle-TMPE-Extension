@@ -234,6 +234,13 @@ namespace EmergencyVehicleExtension.Custom.AI {
             } else {
                 vehicleData.m_blockCounter = 0;
             }
+            // NON-STOCK CODE START
+            if (Options.buildingOverlay) {
+                num13 = 0f;
+                Vector3 b3 = Vector3.ClampMagnitude(point * 0.5f - vector, num2);
+                zero = vector + b3;
+            }
+            // NON-STOCK CODE END
             if (len > 1f) {
                 num14 = Mathf.Asin(a.x) * Mathf.Sign(num13);
                 zero = a * num13;
