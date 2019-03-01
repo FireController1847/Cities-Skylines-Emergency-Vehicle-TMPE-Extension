@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Custom\AI\CustomCarAI.cs" />
+    <Compile Include="Custom\AI\CustomVehicleAI.cs" />
     <Compile Include="LoadingExtension.cs" />
     <Compile Include="EmergencyVehicleExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

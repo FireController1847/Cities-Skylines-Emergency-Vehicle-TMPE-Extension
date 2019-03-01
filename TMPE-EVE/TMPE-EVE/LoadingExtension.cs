@@ -1,4 +1,4 @@
-﻿using ICities;
+using ICities;
 using CSUtil.Commons;
 using ColossalFramework.UI;
 using EmergencyVehicleExtension.UI;
@@ -169,6 +169,24 @@ namespace EmergencyVehicleExtension {
                     typeof(CustomCarAI).GetMethod("CustomSimulationStep")));
             } catch (Exception) {
                 Log.Error("EmergencyVehicleExtension Could not redirect CarAI::SimulationStep calls");
+                failed = true;
+            }
+
+            Log.Info("EmergencyVehicleExtension Redirection VehicleAI::FindBestLane calls");
+            try {
+                Detours.Add(new Detour(typeof(VehicleAI).GetMethod("FindBestLane",
+                    BindingFlags.NonPublic | BindingFlags.Static,
+                    null,
+                    new[]
+                    {
+                        typeof (ushort),
+                        typeof (Vehicle).MakeByRefType(),
+                        typeof (PathUnit.Position)
+                    },
+                    null),
+                    typeof(CustomVehicleAI).GetMethod("CustomFindBestLane")));
+            } catch (Exception) {
+                Log.Error("EmergencyVehicleExtension Could not redirect VehicleAI::UpdatePathTargetPositions calls");
                 failed = true;
             }
 
