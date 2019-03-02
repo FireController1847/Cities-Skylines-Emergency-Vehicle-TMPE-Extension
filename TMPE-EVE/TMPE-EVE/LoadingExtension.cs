@@ -10,6 +10,10 @@ using System.Collections.Generic;
 using ColossalFramework;
 using System;
 using EmergencyVehicleExtension.Custom.AI;
+using ColossalFramework.Plugins;
+using static ColossalFramework.Plugins.PluginManager;
+using TrafficManager;
+using System.Threading;
 
 namespace EmergencyVehicleExtension {
     public class LoadingExtension : LoadingExtensionBase {
@@ -66,7 +70,7 @@ namespace EmergencyVehicleExtension {
                     },
                     null)));
             } catch (Exception) {
-                Log.Error("EmergencyVehicleExtension Could not reverse-redirect CustomVehicleAI::SimulationStepBlown");
+                Log.Error("EmergencyVehicleExtension Could not reverse-redirect CustomCarAI::SimulationStepBlown");
                 failed = true;
             }
 
@@ -98,7 +102,7 @@ namespace EmergencyVehicleExtension {
                     },
                     null)));
             } catch (Exception) {
-                Log.Error("EmergencyVehicleExtension Could not reverse-redirect CustomVehicleAI::SimulationStepFloating");
+                Log.Error("EmergencyVehicleExtension Could not reverse-redirect CustomCarAI::SimulationStepFloating");
                 failed = true;
             }
 
@@ -124,7 +128,7 @@ namespace EmergencyVehicleExtension {
                     },
                     null)));
             } catch (Exception) {
-                Log.Error("EmergencyVehicleExtension Could not reverse-redirect CustomVehicleAI::CalculateMaxSpeed");
+                Log.Error("EmergencyVehicleExtension Could not reverse-redirect CustomCarAI::CalculateMaxSpeed");
                 failed = true;
             }
 
@@ -148,10 +152,35 @@ namespace EmergencyVehicleExtension {
                     },
                     null)));
             } catch (Exception) {
-                Log.Error("EmergencyVehicleExtension Could not reverse-redirect CustomVehicleAI::DisableCollisionCheck");
+                Log.Error("EmergencyVehicleExtension Could not reverse-redirect CustomCarAI::DisableCollisionCheck");
                 failed = true;
             }
 
+            Log.Info("EmergencyVehicleExtension Reverse-Redirecting CustomVehicleAI::FindBestLane calls");
+            try {
+                Detours.Add(new Detour(typeof(CustomVehicleAI).GetMethod("FindBestLane",
+                    BindingFlags.NonPublic | BindingFlags.Static,
+                    null,
+                    new[]
+                    {
+                        typeof (ushort),
+                        typeof (Vehicle).MakeByRefType(),
+                        typeof (PathUnit.Position)
+                    },
+                    null), typeof (VehicleAI).GetMethod("FindBestLane",
+                    BindingFlags.NonPublic | BindingFlags.Static,
+                    null,
+                    new[]
+                    {
+                        typeof (ushort),
+                        typeof (Vehicle).MakeByRefType(),
+                        typeof (PathUnit.Position)
+                    },
+                    null)));
+            } catch (Exception) {
+                Log.Error("EmergencyVehicleExtension Could not reverse-redirect CustomVehicleAI::FindBestLane");
+                failed = true;
+            }
 
             // Forward Redirection
             Log.Info("EmergencyVehicleExtension Redirecting CarAI::SimulationStep calls");
@@ -172,21 +201,25 @@ namespace EmergencyVehicleExtension {
                 failed = true;
             }
 
-            Log.Info("EmergencyVehicleExtension Redirection VehicleAI::FindBestLane calls");
+            Log.Info("EmergencyVehicleExtension Redirecting TrafficManager@CustomVehicleAI::CustomUpdatePathTargetPositions calls");
             try {
-                Detours.Add(new Detour(typeof(VehicleAI).GetMethod("FindBestLane",
-                    BindingFlags.NonPublic | BindingFlags.Static,
+                Detours.Add(new Detour(Type.GetType("TrafficManager.Custom.AI.CustomVehicleAI").GetMethod("CustomUpdatePathTargetPositions",
+                    BindingFlags.NonPublic | BindingFlags.Instance,
                     null,
                     new[]
                     {
                         typeof (ushort),
                         typeof (Vehicle).MakeByRefType(),
-                        typeof (PathUnit.Position)
+                        typeof (Vector3),
+                        typeof (int).MakeByRefType(),
+                        typeof (int),
+                        typeof (float),
+                        typeof (float)
                     },
                     null),
-                    typeof(CustomVehicleAI).GetMethod("CustomFindBestLane")));
+                    typeof(CustomVehicleAI).GetMethod("CustomUpdatePathTargetPositions")));
             } catch (Exception) {
-                Log.Error("EmergencyVehicleExtension Could not redirect VehicleAI::UpdatePathTargetPositions calls");
+                Log.Error("EmergencyVehicleExtension Could not redirect TrafficManager@CustomVehicleAI::CustomUpdatePathTargetPositions calls");
                 failed = true;
             }
 
@@ -224,8 +257,18 @@ namespace EmergencyVehicleExtension {
             // Add vehicle button extensions
             UIView.GetAView().gameObject.AddComponent<VehicleButtonExtender>();
 
-            // Initiate Detours
-            initiateDetours();
+            (new Thread(() => {
+                Log._Debug("EmergencyVehicleExtension Waiting for TM:PE detours to be initiated.");
+                // Wait for TM:PE Detours
+                while (TrafficManager.LoadingExtension.DetourInited != true) {
+                    Thread.Sleep(0);
+                }
+
+                Log._Debug("EmergencyVehicleExtension TM:PE detours have been initiated!");
+
+                // Initiate Detours
+                initiateDetours();
+            })).Start();
         }
 
         public override void OnLevelUnloading() {
